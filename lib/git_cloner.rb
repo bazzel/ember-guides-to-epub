@@ -1,10 +1,14 @@
 class GitCloner
 
+  def self.clone(&block)
+    new.clone(&block)
+  end
+
   def clone
-    remove
+    cleanup
     `git clone -b master --depth 1 #{repository} #{directory}`
-    yield
-    remove
+    yield directory
+    cleanup
   end
 
   private
@@ -12,11 +16,11 @@ class GitCloner
     'https://github.com/emberjs/website'
   end
 
-  def remove
+  def cleanup
     `rm -rf #{directory}`
   end
 
   def directory
-    './tmp/ember-website'
+    Pathname.new('./tmp/ember-website')
   end
 end
