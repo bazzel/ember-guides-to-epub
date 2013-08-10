@@ -1,14 +1,22 @@
 class GitCloner
 
   def clone
-    # clone ember repo
-    `rm -rf tmp/ember-website`
-    `git clone -b master --depth 1 git@github.com:emberjs/website.git ./tmp/ember-website`
+    remove
+    `git clone -b master --depth 1 #{repository} #{directory}`
     yield
-    #
-    #
-    #
-    # rm ember repo
-    `rm -rf tmp/ember-website`
+    remove
+  end
+
+  private
+  def repository
+    'https://github.com/emberjs/website'
+  end
+
+  def remove
+    `rm -rf #{directory}`
+  end
+
+  def directory
+    './tmp/ember-website'
   end
 end
