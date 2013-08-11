@@ -6,24 +6,29 @@ class Guides
     @directory = args[:directory]
   end
 
-  def merged_guides
-    guide = Pathname.new('tmp/guide.md')
-
-    guide.open('w') do |file|
-      urls.each { |url| file.write markdown_for(url) }
-    end
-
-    guide
+  def to_epub
+    merge_guides
+    `pandoc #{markdown_guide} -o 'Ember.js Guides.epub'`
   end
 
   private
+  def markdown_guide
+    directory.join('guide.md')
+  end
+
+  def merge_guides
+    markdown_guide.open('w') { |file| file.write guide_content }
+  end
+
+  def guide_content
+    urls.map { |url| markdown_for(url) }.join("\n")
+  end
+
   # Finds all urls for individual guide files and returns them as an array of strings.
   #
   # @return [Array<String>] of urls to markdown files in logical order
   def urls
-    content = YAML::load_file(directory.join('data', 'guides.yml'))
-
-    content.map do |k, v|
+    YAML::load_file(directory.join('data', 'guides.yml')).map do |k, v|
       v.map { |e| e['url'] }
     end.flatten
   end
@@ -32,10 +37,24 @@ class Guides
     url.gsub!(/\.html$/, '')
     markdown_file = guides_root.join(url)
     markdown_file = markdown_file.directory? ? markdown_file.join('index.md') : guides_root.join("#{url}.md")
-    markdown_file.read
+    content = markdown_file.read
+
+    altered_content(content)
+  end
+
+  # Change URLs for images to avoid error message
+  # pandoc: /views/images/primitive-to-semantic-event.png: openBinaryFile: does not exist (No such file or directory)
+  def altered_content(text)
+    r = /[("'](\/.*\.png)[)"']/
+    root = source_root.expand_path
+    text.gsub(r) { |m| m.gsub($1, [root, $1].join) }
   end
 
   def guides_root
-    Pathname.new(directory).join('source', 'guides')
+    source_root.join('guides')
+  end
+
+  def source_root
+    directory.join('source')
   end
 end
