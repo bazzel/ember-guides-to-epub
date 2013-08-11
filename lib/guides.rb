@@ -8,10 +8,16 @@ class Guides
 
   def to_epub
     merge_guides
-    `pandoc #{markdown_guide} -o 'Ember.js Guides.epub'`
+    output_file.dirname.mkpath
+    `pandoc #{markdown_guide} -o '#{output_file.basename}'`
+    FileUtils.mv(output_file.basename, output_file)
   end
 
   private
+  def output_file
+    Pathname.new('output').join('Ember.js Guides.epub')
+  end
+
   def markdown_guide
     directory.join('guide.md')
   end
