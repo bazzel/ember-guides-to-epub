@@ -4,10 +4,8 @@ class EmberGuidesToKindle
 
   def self.generate
     GitCloner.clone do |directory|
-      puts "Repo an be found in #{directory}"
-      # parse data/guides.yml
-      puts 'Parsing data/guides.yml'
-      puts 'and other stuff'
+      one_guide = Guides.new(directory: directory)
+      one_guide.to_epub
     end
   end
 
