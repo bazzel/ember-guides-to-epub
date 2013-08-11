@@ -2,16 +2,19 @@
 
 require './lib/ember_guides_to_kindle'
 
-namespace :ember_guides_to_kindle do
+namespace :ember_guides_to_epub do
 
-  desc 'Generate kindle files'
+  desc 'Generate epub'
   task :generate do
     start = Time.now
-    $stdout.puts "[%s]: Start generating kindle files." % start
+    $stdout.puts "[%s]: Start generating epub file." % start
 
-    EmberGuidesToKindle.generate
+    GitCloner.clone do |directory|
+      one_guide = Guides.new(directory: directory)
+      one_guide.to_epub
+    end
 
     finish = Time.now
-    $stdout.puts "[%s]: Finished generating kindle files (%.2f s)." % [finish, (finish - start)]
+    $stdout.puts "[%s]: Finished generating epub file (%.2f s)." % [finish, (finish - start)]
   end
 end

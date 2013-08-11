@@ -9,6 +9,7 @@ class Guides
   def to_epub
     merge_guides
     output_file.dirname.mkpath
+    $stdout.puts "[%s]: Convert '%s' to '%s'." % [Time.now, markdown_guide, output_file]
     `pandoc #{markdown_guide} -o '#{output_file.basename}'`
     FileUtils.mv(output_file.basename, output_file)
   end
@@ -23,6 +24,7 @@ class Guides
   end
 
   def merge_guides
+    $stdout.puts "[%s]: Merge guides." % [Time.now]
     markdown_guide.open('w') { |file| file.write guide_content }
   end
 
@@ -43,6 +45,7 @@ class Guides
     url.gsub!(/\.html$/, '')
     markdown_file = guides_root.join(url)
     markdown_file = markdown_file.directory? ? markdown_file.join('index.md') : guides_root.join("#{url}.md")
+    $stdout.puts "[%s]: Retrieve content from '%s'." % [Time.now, markdown_file]
     content = markdown_file.read
 
     altered_content(content)

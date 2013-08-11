@@ -6,6 +6,7 @@ class GitCloner
 
   def clone
     cleanup
+    $stdout.puts "[%s]: Clone %s to %s." % [Time.now, repository, directory]
     `git clone -b master --depth 1 #{repository} #{directory}`
     yield directory
     cleanup
@@ -17,6 +18,7 @@ class GitCloner
   end
 
   def cleanup
+    $stdout.puts "[%s]: Remove %s." % [Time.now, directory]
     `rm -rf #{directory}`
   end
 
