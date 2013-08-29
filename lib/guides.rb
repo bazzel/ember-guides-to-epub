@@ -1,3 +1,5 @@
+require 'yaml'
+
 class Guides
 
   attr_reader :directory
@@ -36,7 +38,7 @@ class Guides
   #
   # @return [Array<String>] of urls to markdown files in logical order
   def urls
-    YAML::load_file(directory.join('data', 'guides.yml')).map do |k, v|
+    ::YAML::load_file(directory.join('data', 'guides.yml')).map do |k, v|
       v.map { |e| e['url'] }
     end.flatten
   end

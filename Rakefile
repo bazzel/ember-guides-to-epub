@@ -1,6 +1,7 @@
 #!usr/bin/env rake
 
-require './lib/ember_guides_to_kindle'
+require './lib/guides'
+require './lib/git_cloner'
 
 namespace :ember_guides_to_epub do
 
